@@ -1,0 +1,149 @@
+<%- include("./partials/header") %>
+
+
+<nav class="navbar navbar-dark bg-dark">
+    <a class="navbar-brand" href="/">To-do list</a>
+</nav>
+
+<div class="container mt-5" style="text-align: center; max-width: 600px; margin: 0 auto; color: black;">
+    <form action="/add/todo" method="POST" class="d-flex" style="justify-content: center; margin-bottom: 20px;" onsubmit="handleForm(event)">
+        <input type="text" name="todo" class="form-control" placeholder="Enter Todo" style="width: 70%; padding: 10px;" required>
+        <input type="submit" value="Add Todo" class="btn btn-md btn-primary mx-2" style="padding: 6.5px 20px; background: rgb(5, 127, 5);">
+    </form>
+
+    <% if (todo.length === 0) { %>
+        <div class="empty-state">No tasks yet! Add your first to-do now 🚀</div>
+    <% } %>
+
+    <ul class="list-group my-5">
+        <% todo.forEach(todos => { %>
+        <li class="list-group-item">
+            <span><%= todos.todo %></span>
+            <a href="/delete/todo/<%= todos._id %>" class="btn btn-success btn-sm">Done</a>
+        </li>
+        <% }) %>
+    </ul>
+</div>
+
+<div id="popup">Now get to work, fast!</div>
+
+<%- include("./partials/footer") %>
+
+<script>
+    function handleForm(event) {
+        event.preventDefault();
+        const popup = document.getElementById('popup');
+        popup.style.display = 'block';
+        setTimeout(() => {
+            popup.style.display = 'none';
+            event.target.submit();
+        }, 2000);
+    }
+
+    // Remove task animation
+    document.querySelectorAll('.btn-success').forEach(button => {
+        button.addEventListener('click', function (e) {
+            e.target.closest('.list-group-item').style.opacity = 0;
+            setTimeout(() => {
+                e.target.closest('.list-group-item').remove();
+            }, 300);
+        });
+    });
+</script>
+
+
+
+<style>
+    body {
+        background-color: #f0f0f0; /* Light gray background */
+        margin: 0;
+        padding: 0;
+        font-family: Arial, sans-serif;
+    }
+
+    .navbar {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        padding: 10px;
+        height: 80px;
+    }
+
+    .navbar-brand {
+        font-size: 34px;
+        font-weight: bold;
+        color: white;
+    }
+
+    .list-group {
+        text-align: left;
+        border-radius: 20px;
+        background-color: #333;
+        box-shadow: 0 6px 10px rgba(0, 0, 0, 0.5);
+        padding: 40px;
+    }
+
+    .list-group-item {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        border-radius: 10px;
+        margin-bottom: 10px;
+        background-color: #444;
+        color: white;
+        transition: transform 0.3s, background-color 0.3s;
+    }
+
+    .list-group-item:hover {
+        background-color: #555;
+        transform: scale(1.02);
+    }
+
+    .btn-success {
+        padding: 5px 50px;
+    }
+
+    /* Popup Notification */
+    #popup {
+        display: none;
+        position: fixed;
+        top: 20px;
+        left: 50%;
+        transform: translateX(-50%);
+        background-color: #28a745;
+        color: white;
+        padding: 10px 20px;
+        border-radius: 5px;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+        z-index: 1000;
+        animation: slideIn 0.3s ease-out, fadeOut 1.5s 1.5s ease-in forwards;
+    }
+
+    @keyframes slideIn {
+        from {
+            transform: translateX(-50%) translateY(-20px);
+            opacity: 0;
+        }
+        to {
+            transform: translateX(-50%) translateY(0);
+            opacity: 1;
+        }
+    }
+
+    @keyframes fadeOut {
+        from {
+            opacity: 1;
+        }
+        to {
+            opacity: 0;
+        }
+    }
+
+    /* Empty State */
+    .empty-state {
+        text-align: center;
+        color: #666;
+        font-size: 18px;
+        margin-top: 20px;
+    }
+</style>
